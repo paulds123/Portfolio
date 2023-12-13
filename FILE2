@@ -1,0 +1,87 @@
+```{r}
+library(here)
+library(plotly)
+library(nycflights13)
+library(janitor)
+library(tidyverse)
+library(skimr)
+```
+
+```{r}
+df1 = flights
+```
+
+```{r}
+df6 = df1 %>% filter(flight=='83',dest='MIA')
+```
+
+```{r}
+df6 |>
+  ggplot(aes(x=dep_delay,y=arr_delay))   +geom_point()+
+```
+
+```{r}
+df1 |>
+  filter(dest=="MIA") |>
+  count(origin.sort=TRUE)
+```
+
+```{r}
+df7 = df1 |>
+  filter(dest="MIA",origin==LGA) |>
+  mutate(flt_delta=arr_delay-dep_delay)
+```
+
+```{r}
+df7 |>
+  ggplot(aes(x=dsp_delay,y=fit_delta))  +geom_point(alpha=0.1)+
+```
+
+```{r}
+df7|>
+  ggplot(aes(x=dsp_delay,y=fit_delta))  +geom_point(alpha=0.1)+
+  geom_hline(aes(yintercept=mean(fit_delta.na.rm=TRUE)))
+```
+
+### Is departure delay affected by time of the year
+```{r}
+df7 |>
+  ggplot(aes(x=time_hour,y=disp_delay))  +geom_point(alpha=0.1)
+```
+
+```{r}
+df7 |>
+  ggplot(aes(x=tim_hour,y=dep_delay)) +
+  geom_point(alpha=0.1) +
+  stat_smooth() +
+  ylim(-25,120)
+```
+
+Why are delays bigger in december than january
+
+```{r}
+df7 |>
+  ggplot(aes(x=hour+minute/60, y=dep_delay)) +
+  geom_point(alpha=0.1) +
+  stat_smooth() +
+  ylim(-25,120)
+```
+
+```{r}
+df7 |>
+  mutate(day_of_week=weekdays(time_hour)) |>
+  ggplot(aes(x=hour+minute/60,y=dep_delay,color=day_of_week)) +
+  geom_point(alpha=0.1) +
+  stat_smooth() +
+  ylim(-25,120)
+```
+
+```{r}
+df7 |>
+  mutate(day_of_week=weekdays(time_hour)) |>
+  ggplot(aes(x=hour+minute/60,y=dep_delay,color=day_of_week)) +
+  geom_point(alpha=0.1) +
+  stat_smooth() +
+  ylim(-20,40)+
+  facet_wrap(-day_of_week)
+```
