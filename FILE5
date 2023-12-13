@@ -1,0 +1,101 @@
+---
+title: "Lab 04"
+author: "David Paul"
+output: html_document
+---
+
+
+```{r}
+library(tidyverse) 
+library(dsbox) 
+states <- read_csv("data/states.csv")
+Laquinta <- read_csv("Laquinta.csv")
+Dennys <- read_csv("Dennys.csv")
+```
+
+1
+```{r}
+nrow(Dennys)
+ncol(Dennys)
+```
+
+
+3
+## Laquinta - Canada, Mexico, China, New Zealand. Turkey, United Arab Emirates, Chile, Colombia, Ecuador
+## Denny's - Chile, Canada, Mexico, Costa Rica, Honduras, El Salvador, United Kingdom, New Zealand
+
+4 - filter, mutate
+
+5 & 6
+```{r}
+dennys %>%
+  filter(!(state %in% states$abbreviation))
+
+dennys %>%
+  mutate(country = "United States")
+```
+
+7 
+##Canada, Mexico, China, New Zealand. Turkey, United Arab Emirates, Chile, Colombia, Ecuador
+
+8
+```{r}
+laquinta %>%
+  mutate(country = case_when(
+    state %in% state.abb     ~ "United States",
+    state %in% c("ON", "BC") ~ "Canada",
+    state == "ANT"           ~ "Colombia",
+    state == "ANT"           ~ "Chile",
+    state == "ANT"           ~ "Ecuador",
+    state == "ANT"           ~ "Turkey",
+    state == "ANT"           ~ "United Arab Emirated",
+    state == "ANT"           ~ "New Zealand",
+    state == "ANT"           ~ "China",
+    state == "ANT"           ~ "Mexico",
+  ))
+  
+laquinta <- laquinta %>%
+  filter(country == "United States")
+
+```
+
+9
+##most - Texas
+##least - Hawaii, Delaware, District of Colombia, Guam, Northern Mariana Islands, American Samoa, U.S. Virgin Islands, Peurto RIco
+  
+```{r}
+dennys %>%
+  count(state) %>%
+  inner_join(states, by = c("state" = "abbreviation"))
+```
+  
+10 - Maryland
+```{r}
+dennys <- dennys %>%
+  mutate(establishment = "Denny's")
+laquinta <- laquinta %>%
+  mutate(establishment = "La Quinta")
+  
+dn_lq <- bind_rows(dennys, laquinta)
+
+ggplot(dn_lq, mapping = aes(x = longitude, y = latitude, color = establishment)) +
+  geom_point()
+```
+
+11
+```{r}
+laquinta <- laquinta %>%
+  filter(state == "North Carolina")
+ggplot(dn_lq, mapping = aes(x = longitude, y = latitude, color = establishment)) +
+  geom_point()
+alpha(red)
+```  
+
+12
+```{r}
+laquinta <- laquinta %>%
+  filter(state == "Texas")
+ggplot(dn_lq, mapping = aes(x = longitude, y = latitude, color = establishment)) +
+  geom_point()
+alpha(red)
+``` 
